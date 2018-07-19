@@ -24,12 +24,25 @@ let persons = [
     }
   ]
 
+const Info = () => {
+    const now = new Date()
+    const size = persons.length
+    const text = "Puhelinluettelossa " + size + " henkilön tiedot <br><br>" + now.toString()
+    return(       
+        text 
+    )
+}
+
   app.get('/', (req, res) => {
     res.send('<h1>Hello World!</h1>')
   })
   
   app.get('/api/persons', (req, res) => {
     res.json(persons)
+  })
+
+  app.get('/info', (req, res) => {   
+    res.send(Info())
   })
   
   const PORT = 3001
