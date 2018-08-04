@@ -60,19 +60,23 @@ class App extends React.Component {
             }
             personService.create(personObj)
             .then( response => {
-                const p = [].concat(response.data)
-                this.setState({ persons: this.state.persons.concat(p) })
+                if (response.data) {
+                    const p = [].concat(response.data)
+                    this.setState({ persons: this.state.persons.concat(p) })
+                    this.setState({ 
+                        message: personObj.name + ' lisätty luetteloon.'})
+                    setTimeout( () => {
+                        this.setState({ message: null })
+                    }, 5000)
+                }      
+            }).catch( error => {
+                window.alert('Nimi ja/tai numero puuttuu.')
             })
             const emptyFields = () => {
                 this.setState({ newName: '' })
                 this.setState({ newNumber: '' })
             }
-            setTimeout(emptyFields, 1200)
-            this.setState({ 
-                message: personObj.name + ' lisätty luetteloon.'})
-            setTimeout( () => {
-                this.setState({ message: null })
-            }, 5000)
+            setTimeout(emptyFields, 1200)           
         }        
     }
 
