@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
+const cors = require('cors')
 
 let persons = [
     {
@@ -28,6 +29,8 @@ let persons = [
 
 app.use(morgan('tiny'))
 app.use(bodyParser.json())
+app.use(cors())
+app.use(express.static('build'))
 
 const Info = () => {
     const now = new Date()
@@ -78,18 +81,18 @@ const Info = () => {
     if ( p ) {
         return res.status(400).json({error: 'name must be unique'})
     } else {
-      const genId = Math.floor(Math.random() * 100000000 + 10)
+      const genId = Math.floor(Math.random() * 1000000000 + 10)
 
       const person = req.body
       person.id = Number(genId)
       persons.concat(person)
       console.log(person)
 
-      res.json(person)
+      res.status(201).json(person)
     }   
   })
   
-  const PORT = 3001
+  const PORT = process.env.PORT || 3001
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
   })
