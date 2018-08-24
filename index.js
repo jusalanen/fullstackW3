@@ -3,9 +3,10 @@ const app = express()
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const cors = require('cors')
+const Person = require('./models/person')
 
-let persons = [
-    {
+let persons = []
+/*  {
       "name": "Arto Hellas",
       "number": "040-123456",
       "id": 1
@@ -25,7 +26,7 @@ let persons = [
       "number": "555-321456",
       "id": 4
     }
-]
+]*/
 
 app.use(morgan('tiny'))
 app.use(bodyParser.json())
@@ -46,7 +47,11 @@ const Info = () => {
   })
   
   app.get('/api/persons', (req, res) => {
-    res.json(persons)
+    Person
+    .find({})
+    .then(persons => {
+      res.json(persons)
+    })
   })
 
   app.get('/info', (req, res) => {   
@@ -72,6 +77,10 @@ const Info = () => {
   })
 
   app.post('/api/persons', (req, res) => {
+    if (req.body === undefined) {
+        return res.status(400).json({error: 'content missing'})
+    }
+    
     console.log(req.body)
     
     if (req.body.name === '' || req.body.number === '') {
