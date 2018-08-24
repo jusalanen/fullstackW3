@@ -4,9 +4,9 @@ const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const cors = require('cors')
 const Person = require('./models/person')
-/*
-let persons = [
-    {
+
+let persons = []
+/*  {
       "name": "Arto Hellas",
       "number": "040-123456",
       "id": 1
@@ -49,8 +49,8 @@ const Info = () => {
   app.get('/api/persons', (req, res) => {
     Person
     .find({})
-    .then(people => {
-      res.json(people)
+    .then(persons => {
+      res.json(persons)
     })
   })
 
