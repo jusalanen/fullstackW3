@@ -50,7 +50,8 @@ const Info = () => {
     Person
     .find({})
     .then(persons => {
-      res.json(persons)
+        const people = persons.map(Person.format)
+        res.json(people)
     })
   })
 
