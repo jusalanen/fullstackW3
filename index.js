@@ -51,11 +51,11 @@ const Info = () => {
     Person
     .find({})
     .then(persons => {
-        const people = persons.map(Person.format)
-        res.json(people)
+      const people = persons.map(Person.format)
+      res.json(people)
     })
     .catch(error => {
-        console.log(error)
+      console.log(error)
     })
   })
 
@@ -75,25 +75,29 @@ const Info = () => {
   })
 
   app.delete('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id) 
-    persons = persons.filter(person => person.id !== id)
+    Person
+      .findByIdAndRemove(req.params.id)
+      .then(result => {
+        res.status(204).end()
+      }).catch( error => {
+        res.status(400).send({ error: 'bad id'})
+      })
     
-    res.status(204).end()
   })
 
   app.post('/api/persons', (req, res) => {
     if (req.body === undefined) {
-        return res.status(400).json({error: 'content missing'})
+      return res.status(400).json({error: 'content missing'})
     }
     
     console.log(req.body)
     
     if (req.body.name === '' || req.body.number === '') {
-        return res.status(400).json({error: 'name or number missing'})
+      return res.status(400).json({error: 'name or number missing'})
     } 
     const p = persons.find(person => person.name === req.body.name)
     if ( p ) {
-        return res.status(400).json({error: 'name must be unique'})
+      return res.status(400).json({error: 'name must be unique'})
     } else {
       const person = new Person({
           name: req.body.name,
