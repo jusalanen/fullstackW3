@@ -5,6 +5,7 @@ const morgan = require('morgan')
 const cors = require('cors')
 const Person = require('./models/person')
 
+
 let persons = []
 /*  {
       "name": "Arto Hellas",
@@ -53,6 +54,9 @@ const Info = () => {
         const people = persons.map(Person.format)
         res.json(people)
     })
+    .catch(error => {
+        console.log(error)
+    })
   })
 
   app.get('/info', (req, res) => {   
@@ -91,16 +95,22 @@ const Info = () => {
     if ( p ) {
         return res.status(400).json({error: 'name must be unique'})
     } else {
-      const genId = Math.floor(Math.random() * 1000000000 + 10)
-
-      const person = req.body
-      person.id = Number(genId)
-      persons.concat(person)
-      console.log(person)
-
-      res.status(201).json(person)
-    }   
-  })
+      const person = new Person({
+          name: req.body.name,
+          number: req.body.number
+      })
+     
+      person
+        .save()
+        .then(savedPerson => {
+            res.status(201).json(Person.format(savedPerson))
+            console.log(savedPerson)
+        })
+        .catch(error => {
+            console.log(error)
+        })   
+      }
+    })
   
   const PORT = process.env.PORT || 3001
   app.listen(PORT, () => {
