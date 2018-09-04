@@ -79,14 +79,31 @@ const Info = () => {
       .findByIdAndRemove(req.params.id)
       .then(result => {
         res.status(204).end()
-      }).catch( error => {
-        res.status(400).send({ error: 'bad id'})
+      }).catch(error => {
+        console.log(error)
+        res.status(400).send({ error: 'bad id' })
+      })    
+  })
+
+  app.put('/api/persons/:id', (req, res) => {
+    const person = {
+      name: req.body.name,
+      number: req.body.number
+    }
+
+    Person
+      .findByIdAndUpdate(req.params.id, person, { new: true })
+      .then(updatedPerson => {
+        res.json(Person.format(updatedPerson))
       })
-    
+      .catch(error => {
+        console.log(error)
+        res.status(400).send({ error: 'bad id' })
+      })
   })
 
   app.post('/api/persons', (req, res) => {
-    if (req.body === undefined) {
+    if (req.body.name === undefined || req.body.number === undefined) {
       return res.status(400).json({error: 'content missing'})
     }
     
