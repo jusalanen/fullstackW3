@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const baseUrl = '/api/persons/'
+const baseUrl = '/api/persons'
 
 const getAll = () => {
   return axios.get(baseUrl)
@@ -12,12 +12,12 @@ const create = (newObject) => {
 
 const deletePerson = (personId) => {
     const id = String(personId)
-    const strDel = baseUrl.concat("", id)
+    const strDel = baseUrl.concat("/", id)
     return axios.delete(strDel)
 }
 
 const update = (id, newObject) => {
-    const strPut = baseUrl.concat("", String(id))
+    const strPut = baseUrl.concat("/", String(id))
     return axios.put(strPut, newObject)
 }
 

@@ -13,9 +13,9 @@ const Person = (props) => {
                             "Haluatko poistaa henkilön " + person.name)) {
                                 personService.deletePerson(person.id)
                                 .then( () => {
-                                console.log("deleting person " + person.id)
-                                handleDelete(person)
+                                console.log("deleting person " + person.name)                          
                                 })
+                                handleDelete(person)
                             }
                         }}
                         >poista</button></td></tr>

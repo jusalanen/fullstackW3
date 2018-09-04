@@ -18,7 +18,7 @@ class App extends React.Component {
     }
 
     handleDelete(delPerson) {
-        const p = this.state.persons.filter(person => person.id !== delPerson.id)
+        const p = this.state.persons.filter(person => person.name !== delPerson.name)
         this.setState({persons: p})
         this.setState({ 
             message: '' + delPerson.name + ' poistettu luettelosta.' })
@@ -28,6 +28,13 @@ class App extends React.Component {
     }
 
     componentDidMount() {
+        personService.getAll()
+        .then( response => {
+            this.setState({persons: response.data})
+        })
+    }
+
+    getPersons() {
         personService.getAll()
         .then( response => {
             this.setState({persons: response.data})
@@ -51,32 +58,78 @@ class App extends React.Component {
         const names = []
         this.state.persons.map(person => names.push(person.name))
         if(names.includes(this.state.newName)) {
-            window.alert("Nimi on jo luettelossa. Anna toinen nimi.")
-            this.setState({ newName: '' })           
+            if (window.confirm(this.state.newName + 
+                " on jo luettelossa. Korvataanko numero uudella?")) {
+                    this.state.persons.forEach((person) => {
+                        if(person.name === this.state.newName) {
+                            const changedPerson = {
+                                name: person.name,
+                                number: this.state.newNumber,
+                            }
+                            personService.update(person.id, changedPerson)
+                            .then( response => {
+                                console.log(response.data)
+                                this.getPersons()
+                                this.setState({ newName: '', newNumber: '' })
+                                this.setState({ 
+                                    message: 'Henkilön ' + person.name + ' numero muutettu.'})
+                                setTimeout( () => {
+                                    this.setState({ message: null })
+                                }, 5000)
+                            }).catch( error => {
+                                console.log(error)
+                                if (window.confirm(this.state.newName +
+                                ' on jo poistettu palvelimelta. Lisätäänkö uudelleen?')) {
+                                    const personObj = {
+                                        name: this.state.newName,
+                                        number: this.state.newNumber
+                                    }
+                                    personService.create(personObj)
+                                    .then( response => {
+                                        this.getPersons()
+                                        console.log(response.data)
+                                    })
+                                    this.setState({ newName: '', newNumber: '' })
+                                    this.setState({ 
+                                        message: personObj.name + ' lisätty luetteloon.'})
+                                    setTimeout( () => {
+                                        this.setState({ message: null })
+                                    }, 5000)
+                                }
+                            })
+                        }
+                    })               
+                } else {
+                    this.setState({ newName: '', newNumber: '' })
+                }    
         } else {
-            const personObj = {
-                name: this.state.newName,
-                number: this.state.newNumber
-            }
-            personService.create(personObj)
-            .then( response => {
-                if (response.data) {
-                    const p = [].concat(response.data)
-                    this.setState({ persons: this.state.persons.concat(p) })
-                    this.setState({ 
-                        message: personObj.name + ' lisätty luetteloon.'})
-                    setTimeout( () => {
-                        this.setState({ message: null })
-                    }, 5000)
-                }      
-            }).catch( error => {
+            if(this.state.newName === '' || this.state.newNumber === '') {
                 window.alert('Nimi ja/tai numero puuttuu.')
-            })
-            const emptyFields = () => {
-                this.setState({ newName: '' })
-                this.setState({ newNumber: '' })
-            }
-            setTimeout(emptyFields, 1200)           
+            } else {
+                const personObj = {
+                    name: this.state.newName,
+                    number: this.state.newNumber
+                }
+                personService.create(personObj)
+                .then( response => {
+                    if (response.data) {
+                        const p = [].concat(response.data)//ota responsesta, kun Post mLabiin toimii
+                        this.setState({ persons: this.state.persons.concat(p)})
+                        this.setState({ 
+                            message: personObj.name + ' lisätty luetteloon.'})
+                        setTimeout( () => {
+                            this.setState({ message: null })
+                        }, 5000)
+                    }      
+                }).catch( error => {
+                    console.log(error)
+                })
+                const emptyFields = () => {
+                    this.setState({ newName: '' })
+                    this.setState({ newNumber: '' })
+                }
+                setTimeout(emptyFields, 1200)     
+            }                 
         }        
     }
 
