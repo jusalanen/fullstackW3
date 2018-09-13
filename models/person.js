@@ -1,8 +1,11 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-// ethän laita salasanaa Githubiin!
-const url = 'mongodb://o3backend:**********@ds217092.mlab.com:17092/fullstack-phonebook'
+if ( process.env.NODE_ENV !== 'production' ) {
+    require('dotenv').config()
+  }
+
+const url = process.env.MONGODB_URI
 
 mongoose.connect(url, { useNewUrlParser: true }) //NewUrlParser to prevent DeprecationWarning
 
